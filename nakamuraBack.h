@@ -3,40 +3,46 @@ Nakamura Backend
 Backend for Nakamura, the RC Circuit Simulator
 */
 
-#include <stdio.h>
+#include <cstdio>
+#include <cmath>
+#ifndef M_PI
+  #define M_PI 3.14159265358979323846
+#endif
 
 // global variables desu
 
 /*
-VAmp: voltage source amplitude
-VFre: voltage source frequency
-VPha: voltage source phase
-VSrc: voltage source type
+VAmp: voltage source amplitude (Volts)
+VFre: voltage source frequency (Volts)
+VPha: voltage source phase (radians)
+VSrc: voltage source type (integer)
   0: sinusoid
   1: squarewave
   2: triangular wave
-VNu: initial voltage at t==0
+VNu: initial voltage at t==0 (Volts)
 */
 double VAmp, VFre, VPha, VNu;
 int VSrc;
 
 /*
-TStart: start time
-TStop: end time
-TNum: number of samples to be taken
+TStart: start time (seconds)
+TStop: end time (seconds)
+TNum: number of samples to be taken (long long)
 */
 double TStart, TStop;
-int TNum;
+long long TNum;
 
 /*
-Res: resistance
-Cap: capacitance
+Res: resistance (Ohms)
+Cap: capacitance (Farads)
 */
 double Res, Cap;
 
 /*
 Vin: double->double function for the voltage in terms of time
 and in terms of the above values
+input: time in seconds
+output: voltage in volts
 */
 double Vin (double t)
 {
@@ -47,6 +53,7 @@ double Vin (double t)
 tpFile: our temporary file
 Since there'll be a lot of numbers involved, it is best to store
 the data to a temporary file to be recovered and plotted later.
+The temporary file should contain the output voltage already.
 
 SYNTAX FOR TEMPORARY FILE: time-space-vout e.g.
 
