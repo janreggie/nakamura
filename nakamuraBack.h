@@ -13,7 +13,7 @@ Backend for Nakamura, the RC Circuit Simulator
 
 /*
 VAmp: voltage source amplitude (Volts)
-VFre: voltage source frequency (Volts)
+VFre: voltage source frequency (rad/s) (NOTE: RADIANS PER SECOND!)
 VPha: voltage source phase (radians)
 VSrc: voltage source type (integer)
   0: sinusoid
