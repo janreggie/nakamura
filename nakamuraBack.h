@@ -21,7 +21,7 @@ VSrc: voltage source type (integer)
   0: sinusoid
   1: squarewave
   2: triangular wave
-VNu: initial voltage at t==0 (Volts)
+VNu: initial voltage (of the capacitor!) at t==0 (Volts)
 */
 double VAmp, VFre, VPha, VNu;
 int VSrc;
@@ -39,6 +39,12 @@ Res: resistance (Ohms)
 Cap: capacitance (Farads)
 */
 double Res, Cap;
+
+/*
+VOMax, VOMin: maximum and minimum values for output voltage.
+Both shall be used for graphing the output voltages.
+*/
+double VOMax = 0, VOMin = 0;
 
 /*
 Vin: double->double function for the voltage in terms of time
@@ -93,7 +99,8 @@ void writeToTemp ()
   // do some variables
   double k1, k2, k3, k4;  // to be used for later; just allocate mem now
   double TNow = 0;  // what's the current time?
-  double Vout = VNu;  // output voltage at a certain time (HIGHLY IMPORTANT)
+  // Note VNu is vital for initial condition!
+  double Vout = Vin(0) - VNu;  // output voltage at a certain time (HIGHLY IMPORTANT)
   while (TNow < TStop)
   {
     k1 = TStep * f(TNow, Vout);
@@ -107,6 +114,9 @@ void writeToTemp ()
       // in that case, put it in the temp file
       std::string temp = std::to_string(TNow)+' '+std::to_string(Vout)+'\n';
       fputs(temp.c_str(), tpFile);
+      // and check VOMax and VOMin
+      if (Vout > VOMax) VOMax = Vout;
+      if (Vout < VOMin) VOMin = Vout;
     }
   }
 }
