@@ -1,21 +1,30 @@
-/***************************************************************
- * Name:      nakamuraApp.h
- * Purpose:   Defines Application Class
- * Author:    janreggie, jriaghan, sangjeona ()
- * Created:   2018-04-05
- * Copyright: janreggie, jriaghan, sangjeona ()
- * License:   MIT License
- **************************************************************/
+//---------------------------------------------------------------------------
+//
+// Name:        nakamuraApp.h
+// Author:      JRAV
+// Created:     2018-04-06 3:25:52 PM
+// Description: 
+//
+//---------------------------------------------------------------------------
 
-#ifndef NAKAMURAAPP_H
-#define NAKAMURAAPP_H
+#ifndef __PROJ2EBLFRMApp_h__
+#define __PROJ2EBLFRMApp_h__
 
-#include <wx/app.h>
+#ifdef __BORLANDC__
+	#pragma hdrstop
+#endif
 
-class nakamuraApp : public wxApp
+#ifndef WX_PRECOMP
+	#include <wx/wx.h>
+#else
+	#include <wx/wxprec.h>
+#endif
+
+class PROJ2EBLFrmApp : public wxApp
 {
-    public:
-        virtual bool OnInit();
+	public:
+		bool OnInit();
+		int OnExit();
 };
 
-#endif // NAKAMURAAPP_H
+#endif

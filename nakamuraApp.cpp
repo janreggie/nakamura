@@ -1,33 +1,26 @@
-/***************************************************************
- * Name:      nakamuraApp.cpp
- * Purpose:   Code for Application Class
- * Author:    janreggie, jriaghan, sangjeona ()
- * Created:   2018-04-05
- * Copyright: janreggie, jriaghan, sangjeona ()
- * License:   MIT License
- **************************************************************/
+//---------------------------------------------------------------------------
+//
+// Name:        nakamuraApp.cpp
+// Author:      JRAV
+// Created:     2018-04-06 3:25:52 PM
+// Description: 
+//
+//---------------------------------------------------------------------------
 
 #include "nakamuraApp.h"
+#include "nakamuraFrm.h"
 
-//(*AppHeaders
-#include "nakamuraMain.h"
-#include <wx/image.h>
-//*)
+IMPLEMENT_APP(PROJ2EBLFrmApp)
 
-IMPLEMENT_APP(nakamuraApp);
-
-bool nakamuraApp::OnInit()
+bool PROJ2EBLFrmApp::OnInit()
 {
-    //(*AppInitialize
-    bool wxsOK = true;
-    wxInitAllImageHandlers();
-    if ( wxsOK )
-    {
-    	nakamuraFrame* Frame = new nakamuraFrame(0);
-    	Frame->Show();
-    	SetTopWindow(Frame);
-    }
-    //*)
-    return wxsOK;
-
+    PROJ2EBLFrm* frame = new PROJ2EBLFrm(NULL);
+    SetTopWindow(frame);
+    frame->Show();
+    return true;
+}
+ 
+int PROJ2EBLFrmApp::OnExit()
+{
+	return 0;
 }
