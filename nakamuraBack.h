@@ -58,7 +58,7 @@ double Vin (double t)
     if (fmod(t,period) <= period/2)
       return VAmp;
     //first half of the cycle
-    if (fmod(t,period) >= period/2))
+    if (fmod(t,period) >= period/2)
       return (-1) * VAmp;
     //second half of the cycle
   }
@@ -70,7 +70,7 @@ double Vin (double t)
     if (fmod(t,period) <= period/2)
       return m * fmod(t,period) - VAmp;
     //first half of the cycle
-    if (fmod(t,period) >= period/2))
+    if (fmod(t,period) >= period/2)
       return (-1) * m * (fmod(t,period) - period/2) + VAmp;
     //second half of the cycle
   }
@@ -96,13 +96,12 @@ double Vin (double t)
  0.000002 1.99320
  */
 FILE * tpFile;
-tpFile = tmpfile();
 
 /*
  writeToTemp: void function that will do the appropriate maths (fucking ODEs)
  to the temporary file to be retrieved later.
  */
-void writeToTemp
+void writeToTemp ()
 {
   // lol
 }
