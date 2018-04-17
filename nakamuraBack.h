@@ -46,17 +46,15 @@ double Res, Cap;
  */
 double Vin (double t)
 {
-  if (VSrc = 0)
-    //sinusoidal
+  if (VSrc == 0)  //sinusoidal
   {
        return VAmp * sin(VFre * t - VPha);
     // frequency is b/2pi, wherein Asin(bt), wherein A is amplitude. therefore, b is 2pi * freq.
   }
   
-  if (VSrc = 1)
-    //square
+  if (VSrc == 1)  //square
   {
-    double period = 2pi/VFre;
+    double period = 2 * M_PI/VFre;
     if (fmod(t,period) <= period/2)
       return VAmp;
     //first half of the cycle
@@ -65,11 +63,10 @@ double Vin (double t)
     //second half of the cycle
   }
   
-  if (VSrc = 2)
-    //triangular
+  if (VSrc == 2)  //triangular
   {
-    double period = 2pi/VFre;
-    double m = VAmp/period;
+    double period = 2 * M_PI/VFre;
+    double m = 4 * VAmp/period;
     if (fmod(t,period) <= period/2)
       return m * fmod(t,period);
     //first half of the cycle
