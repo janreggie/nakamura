@@ -68,7 +68,7 @@ double Vin (double t)
     double period = 2 * M_PI/VFre;
     double m = 4 * VAmp/period;
     if (fmod(t,period) <= period/2)
-      return m * fmod(t,period);
+      return m * fmod(t,period) - VAmp;
     //first half of the cycle
     if (fmod(t,period) >= period/2))
       return (-1) * m * (fmod(t,period) - period/2) + VAmp;
