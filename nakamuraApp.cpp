@@ -8,6 +8,7 @@
  **************************************************************/
 
 #include "nakamuraApp.h"
+#include "nakamuraBack.h"
 
 //(*AppHeaders
 #include "nakamuraMain.h"
