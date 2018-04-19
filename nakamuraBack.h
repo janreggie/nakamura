@@ -103,10 +103,36 @@ FILE * tpFile;
  writeToTemp: void function that will do the appropriate maths (fucking ODEs)
  to the temporary file to be retrieved later.
  */
-void writeToTemp ()
+void writeOut ()
 {
+  std::string VType;
+  if (VSrc == 0)
+  {
+    VType = "Sinusuidal";
+  }
+  if (VSrc == 1)
+  {
+    VType = "Rectangular";
+  }
+  if (VSrc == 2)
+  {
+    VType = "Triangular";
+  }
+
   // First, open up the file
-  tpFile = tmpfile();
+  ofstream output;
+  output.open ("RCOutput.csv");
+  //block of text containing initial informations
+  output << "Voltage Source: " << VType << endl;
+  output << "Amplitude: " << VAmp << "V\n";
+  output << "Frequency: " << VFre << "rad/s\n";
+  output << "Phase: " << VPha << "rad\n";
+  output << "Resistance: " << Res << "Ohm\n";
+  output << "Capacitnace: " << Cap << "e-3F\n";
+  output << "Initial Voltage for Capacitance: " << VNu << "V\n";
+  output << "Start: " << TStart << "s  Stop: " << TStop << "s\n";
+  output << "Data points: " << TNum; << endl << endl;
+  output.close();
 
   // Determine our step size for time
   // look at all the vars starting with TSt lol
@@ -128,6 +154,11 @@ void writeToTemp ()
   double k1, k2, k3, k4;  // to be used for later; just allocate mem now
   double TNow = 0;  // what's the current time?
   double Vout = VNu;  // output voltage at a certain time (HIGHLY IMPORTANT)
+  
+  //table
+  ofstream output;
+  output.open ("RCOutput.csv", ios::out | ios::app);
+  output << "Time" << "," << "Vin" << "," << "VOut" << endl;
   while (TNow < TStop)
   {
     k1 = TStep * f(TNow, Vout);
@@ -135,12 +166,14 @@ void writeToTemp ()
     k3 = TStep * f(TNow + TStep/2, Vout + k2/2);
     k4 = TStep * f(TNow + TStep, Vout + k3);
     Vout += k1/6 + k2/3 + k3/3 + k4/6;  // nothing should go wrong, rite?
-    TNow += TStep;
+    
     if (TNow > TStart)
     {
+      TNow += TStep;
       // in that case, put it in the temp file
-      std::string temp = std::to_string(TNow)+' '+std::to_string(Vout)+'\n';
-      fputs(temp.c_str(), tpFile);
+      //std::string temp = std::to_string(TNow)+' '+std::to_string(Vout)+'\n';
+      //fputs(temp.c_str(), tpFile);
+      output << TNow << "," << Vin(TNow) << "," << Vout << endl;
     }
   }
 }
