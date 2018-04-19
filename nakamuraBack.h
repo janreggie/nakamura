@@ -53,7 +53,7 @@ double Vin (double t)
        return VAmp * sin(VFre * t - VPha);
     // frequency is b/2pi, wherein Asin(bt), wherein A is amplitude. therefore, b is 2pi * freq.
   }
-  
+
   if (VSrc == 1)  //square
   {
     double period = 2 * M_PI/VFre;
@@ -64,7 +64,7 @@ double Vin (double t)
       return (-1) * VAmp;
     //second half of the cycle
   }
-  
+
   if (VSrc == 2)  //triangular
   {
     double period = 2 * M_PI/VFre;
@@ -77,7 +77,7 @@ double Vin (double t)
     //second half of the cycle
   }
   //these are from point-slope formula.
-  
+
   else
   {
     return 0;
@@ -90,14 +90,29 @@ double Vin (double t)
  Since there'll be a lot of numbers involved, it is best to store
  the data to a temporary file to be recovered and plotted later.
  The temporary file should contain the output voltage already.
- 
+
  SYNTAX FOR TEMPORARY FILE: time-space-vout e.g.
- 
+
  0 1.2
  0.000001 1.19532
  0.000002 1.99320
  */
 FILE * tpFile;
+
+/*
+ all the functions that were supposed to be lambdas
+ but wxDev hates C++11 and is a horrible IDE overall.
+ */
+double dVin(double t)  // first differential of Vin
+{
+  double TStep = (TStop - TStart) / TNum;
+  return ((Vin(t+TStep) - Vin(t)) / TStep);
+}
+
+double f (double x, double y)  // differential equation
+{
+  return (dVin(x) - y / (Res*Cap));
+}
 
 /*
  writeToTemp: void function that will do the appropriate maths (fucking ODEs)
@@ -111,19 +126,10 @@ void writeToTemp ()
   // Determine our step size for time
   // look at all the vars starting with TSt lol
   double TStep = (TStop - TStart) / TNum;
-  // and now for lambda function
-  auto dVin = [&TStep](double t) -> double
-  {
-    return (Vin(t+TStep) - Vin(t)) / TStep;
-  };
 
   // Note that we shall be using classical fourth-order Runge-Kutta
   // Press et.al: Numerical Recipes The Art of Scientific Computing
-  // lambda function for the differential equation
-  auto f = [&dVin](double x, double y) -> double
-  {
-    return (dVin(x) - y/(Res*Cap));
-  };
+
   // do some variables
   double k1, k2, k3, k4;  // to be used for later; just allocate mem now
   double TNow = 0;  // what's the current time?
