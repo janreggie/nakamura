@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cmath>
 #include <string>
+#include <fstream>
 
 #ifndef M_PI
   #define M_PI 3.14159265358979323846
@@ -50,60 +51,35 @@ double Vin (double t)
 {
   if (VSrc == 0)  //sinusoidal
   {
-       return VAmp * sin(VFre * t - VPha);
+    return VAmp * sin(VFre * t - VPha);
     // frequency is b/2pi, wherein Asin(bt), wherein A is amplitude. therefore, b is 2pi * freq.
   }
-
   if (VSrc == 1)  //square
   {
     double period = 2 * M_PI/VFre;
-    if (fmod(t,period) <= period/2)
+    if (fmod(t,period) <= period/2)  //first half of the cycle
       return VAmp;
-    //first half of the cycle
-    if (fmod(t,period) >= period/2)
+    if (fmod(t,period) >= period/2)  //second half of the cycle
       return (-1) * VAmp;
-    //second half of the cycle
   }
-
   if (VSrc == 2)  //triangular
   {
     double period = 2 * M_PI/VFre;
     double m = 4 * VAmp/period;
-    if (fmod(t,period) <= period/2)
+    if (fmod(t,period) <= period/2)  //first half of the cycle
       return m * fmod(t,period) - VAmp;
-    //first half of the cycle
-    if (fmod(t,period) >= period/2)
+    if (fmod(t,period) >= period/2)  //second half of the cycle
       return (-1) * m * (fmod(t,period) - period/2) + VAmp;
-    //second half of the cycle
   }
-  //these are from point-slope formula.
-
-  else
-  {
-    return 0;
-  }
-  //return 0.0;
+  // and otherwise
+  return 0;
 }
-
-/*
- tpFile: our temporary file
- Since there'll be a lot of numbers involved, it is best to store
- the data to a temporary file to be recovered and plotted later.
- The temporary file should contain the output voltage already.
-
- SYNTAX FOR TEMPORARY FILE: time-space-vout e.g.
-
- 0 1.2
- 0.000001 1.19532
- 0.000002 1.99320
- */
-FILE * tpFile;
 
 /*
  all the functions that were supposed to be lambdas
  but wxDev hates C++11 and is a horrible IDE overall.
  */
-double dVin(double t)  // first differential of Vin
+double dVin (double t)  // first differential of Vin
 {
   double TStep = (TStop - TStart) / TNum;
   return ((Vin(t+TStep) - Vin(t)) / TStep);
@@ -115,39 +91,32 @@ double f (double x, double y)  // differential equation
 }
 
 /*
- writeToTemp: void function that will do the appropriate maths (fucking ODEs)
+ writeOut: void function that will do the appropriate maths (fucking ODEs)
  to the temporary file to be retrieved later.
  */
 void writeOut ()
 {
   std::string VType;
   if (VSrc == 0)
-  {
-    VType = "Sinusuidal";
-  }
-  if (VSrc == 1)
-  {
+    VType = "Sinusoidal";
+  else if (VSrc == 1)
     VType = "Rectangular";
-  }
-  if (VSrc == 2)
-  {
+  else if (VSrc == 2)
     VType = "Triangular";
-  }
 
   // First, open up the file
-  ofstream output;
+  std::ofstream output;
   output.open ("RCOutput.csv");
   //block of text containing initial informations
-  output << "Voltage Source: " << VType << endl;
+  output << "Voltage Source: " << VType << std::endl;
   output << "Amplitude: " << VAmp << "V\n";
   output << "Frequency: " << VFre << "rad/s\n";
   output << "Phase: " << VPha << "rad\n";
   output << "Resistance: " << Res << "Ohm\n";
-  output << "Capacitnace: " << Cap << "e-3F\n";
+  output << "Capacitnace: " << Cap << "Farads\n";
   output << "Initial Voltage for Capacitance: " << VNu << "V\n";
   output << "Start: " << TStart << "s  Stop: " << TStop << "s\n";
-  output << "Data points: " << TNum; << endl << endl;
-  output.close();
+  output << "Data points: " << TNum << std::endl << std::endl;
 
   // Determine our step size for time
   // look at all the vars starting with TSt lol
@@ -159,12 +128,10 @@ void writeOut ()
   // do some variables
   double k1, k2, k3, k4;  // to be used for later; just allocate mem now
   double TNow = 0;  // what's the current time?
-  double Vout = VNu;  // output voltage at a certain time (HIGHLY IMPORTANT)
-  
-  //table
-  ofstream output;
-  output.open ("RCOutput.csv", ios::out | ios::app);
-  output << "Time" << "," << "Vin" << "," << "VOut" << endl;
+  double Vout = Vin(0) - VNu;  // output voltage at a certain time (HIGHLY IMPORTANT)
+
+  // the table thingy
+  output << "Time" << "," << "Vin" << "," << "VOut" << std::endl;
   while (TNow < TStop)
   {
     k1 = TStep * f(TNow, Vout);
@@ -172,14 +139,8 @@ void writeOut ()
     k3 = TStep * f(TNow + TStep/2, Vout + k2/2);
     k4 = TStep * f(TNow + TStep, Vout + k3);
     Vout += k1/6 + k2/3 + k3/3 + k4/6;  // nothing should go wrong, rite?
-    
-    if (TNow > TStart)
-    {
-      TNow += TStep;
-      // in that case, put it in the temp file
-      //std::string temp = std::to_string(TNow)+' '+std::to_string(Vout)+'\n';
-      //fputs(temp.c_str(), tpFile);
-      output << TNow << "," << Vin(TNow) << "," << Vout << endl;
-    }
+    if (TNow > TStart) // in that case, put it in the temp file
+      output << TNow << "," << Vin(TNow) << "," << Vout << std::endl;
+    TNow += TStep;  // to not make the loop infinite
   }
 }
